@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CreateAccountOutputDTO {
+  error: String
+  ok: Boolean!
+}
+
 type Restaurant {
   id: Float!
   name: String!
@@ -16,8 +21,21 @@ type Query {
 }
 
 type Mutation {
+  createAccount(userInfo: CreateAccountInputDTO!): CreateAccountOutputDTO!
   createRestaurant(input: CreateRestaurantDTO!): Boolean!
   updateRestaurant(id: Float!, data: UpdateRestaurantInputType!): Boolean!
+}
+
+input CreateAccountInputDTO {
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
+enum UserRole {
+  Owner
+  Client
+  Delivery
 }
 
 input CreateRestaurantDTO {
