@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType()
-@Entity()
+@ObjectType() // graphQl type definition 용
+@Entity() // typeorm db model 용
 export class Restaurant {
-  @Field(() => Number)
-  @PrimaryGeneratedColumn()
+  @Field(() => Number) // graphQl 용
+  @PrimaryGeneratedColumn() // typeorm 용
   id: number;
 
   @Field(() => String)
@@ -24,4 +24,8 @@ export class Restaurant {
   @Field(() => String)
   @Column()
   ownerName: string;
+
+  @Field(() => String)
+  @Column()
+  cateogry: string;
 }
