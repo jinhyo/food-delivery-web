@@ -9,7 +9,7 @@ export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   // @Query((returns) => Boolean) or
-  @Query(() => [Restaurant])
+  @Query(() => Boolean) // graphQl 용
   restaurants(@Args('veganOnly') veganOnly: boolean): boolean {
     // @Args('veganOnly')는 graphQl을 위해 필요
     // 뒤의 veganOnly: boolean는 typescript용
@@ -25,11 +25,11 @@ export class RestaurantResolver {
 
   @Mutation(() => Boolean)
   async createRestaurant(
-    // @Args('restaurantInfo') restaurantInfo: CreateRestaurantDTO, =  DTO를 @InputType으로 작성했을 경우
-    @Args() restaurantInfo: CreateRestaurantDTO, // DTO를 @ArgsType 으로 작성했을 경우
+    // @Args() restaurantInfo: CreateRestaurantDTO, =  DTO를 @ArgsType으로 작성했을 경우
+    @Args('input') createRestaurantDTO: CreateRestaurantDTO, // DTO를 @ArgsType 으로 작성했을 경우
   ): Promise<boolean> {
     try {
-      await this.restaurantService.createRestaurant(restaurantInfo);
+      await this.restaurantService.createRestaurant(createRestaurantDTO);
 
       return true;
     } catch (error) {
