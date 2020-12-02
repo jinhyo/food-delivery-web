@@ -18,10 +18,8 @@ export class UsersResolver {
     return this.userService.createAccount(userInfo);
   }
 
-  @Mutation(() => Boolean)
-  async login(
-    @Args('loginData') loginData: LoginInputDTO,
-  ): Promise<LoginOutputDTO> {
+  @Mutation(() => LoginOutputDTO)
+  login(@Args('loginData') loginData: LoginInputDTO): Promise<LoginOutputDTO> {
     return this.userService.login(loginData);
   }
 }

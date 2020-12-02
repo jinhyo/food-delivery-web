@@ -7,6 +7,6 @@ export class LoginInputDTO extends PickType(User, ['email', 'password']) {}
 
 @ObjectType()
 export class LoginOutputDTO extends OutputDTO {
-  @Field(() => String)
-  token: string;
+  @Field(() => String, { nullable: true })
+  token?: string;
 }

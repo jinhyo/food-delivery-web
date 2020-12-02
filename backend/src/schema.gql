@@ -7,6 +7,12 @@ type CreateAccountOutputDTO {
   ok: Boolean!
 }
 
+type LoginOutputDTO {
+  error: String
+  ok: Boolean!
+  token: String
+}
+
 type Restaurant {
   id: Float!
   name: String!
@@ -22,6 +28,7 @@ type Query {
 
 type Mutation {
   createAccount(userInfo: CreateAccountInputDTO!): CreateAccountOutputDTO!
+  login(loginData: LoginInputDTO!): LoginOutputDTO!
   createRestaurant(input: CreateRestaurantDTO!): Boolean!
   updateRestaurant(id: Float!, data: UpdateRestaurantInputType!): Boolean!
 }
@@ -36,6 +43,11 @@ enum UserRole {
   Owner
   Client
   Delivery
+}
+
+input LoginInputDTO {
+  email: String!
+  password: String!
 }
 
 input CreateRestaurantDTO {
