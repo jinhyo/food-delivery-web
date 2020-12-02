@@ -13,15 +13,15 @@ export class Restaurant {
   @Column()
   name: string;
 
-  @Column()
   @Field(() => Boolean)
+  @Column()
   isVegan?: boolean;
 
-  @Column()
   @Field(() => String)
+  @Column()
   address: string;
 
-  @Column()
   @Field(() => String)
+  @Column()
   ownerName: string;
 }

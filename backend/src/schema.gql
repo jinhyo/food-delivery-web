@@ -12,6 +12,7 @@ type Restaurant {
 
 type Query {
   restaurants(veganOnly: Boolean!): [Restaurant!]!
+  restaurants2: [Restaurant!]!
 }
 
 type Mutation {
