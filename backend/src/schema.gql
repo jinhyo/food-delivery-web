@@ -21,7 +21,7 @@ type Mutation {
 
 input CreateRestaurantDTO {
   name: String!
-  isVegan: Boolean!
+  isVegan: Boolean = true
   address: String!
   ownerName: String!
 }

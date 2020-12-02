@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { IsBoolean, IsString, Length } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 // @InputType({isAbstract: true}) //를 통해 DTO에서 OmitType을 할 수 있음
@@ -16,9 +16,10 @@ export class Restaurant {
   @Length(5, 20)
   name: string;
 
-  @Field(() => Boolean)
-  @Column()
+  @Field(() => Boolean, { defaultValue: true })
+  @Column({ default: true })
   @IsBoolean()
+  @IsOptional()
   isVegan?: boolean;
 
   @Field(() => String)
