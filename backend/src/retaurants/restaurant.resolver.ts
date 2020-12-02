@@ -31,11 +31,9 @@ export class RestaurantResolver {
   ): Promise<boolean> {
     try {
       await this.restaurantService.createRestaurant(createRestaurantDTO);
-
       return true;
     } catch (error) {
       console.error(error);
-
       return false;
     }
   }
@@ -46,11 +44,9 @@ export class RestaurantResolver {
   ): Promise<boolean> {
     try {
       await this.restaurantService.updaterestaurant(updateRestaurantDTO);
-
       return true;
     } catch (error) {
       console.error(error);
-
       return false;
     }
 
