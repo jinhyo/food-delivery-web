@@ -30,7 +30,7 @@ import { Restaurant } from './retaurants/entities/restaurant.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: false,
+      logging: true,
       entities: [Restaurant],
     }),
     GraphQLModule.forRoot({

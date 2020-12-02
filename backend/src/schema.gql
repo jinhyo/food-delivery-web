@@ -17,6 +17,7 @@ type Query {
 
 type Mutation {
   createRestaurant(input: CreateRestaurantDTO!): Boolean!
+  updateRestaurant(id: Float!, data: UpdateRestaurantInputType!): Boolean!
 }
 
 input CreateRestaurantDTO {
@@ -24,4 +25,11 @@ input CreateRestaurantDTO {
   isVegan: Boolean = true
   address: String!
   ownerName: String!
+}
+
+input UpdateRestaurantInputType {
+  name: String
+  isVegan: Boolean = true
+  address: String
+  ownerName: String
 }
