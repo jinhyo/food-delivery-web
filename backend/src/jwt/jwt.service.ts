@@ -14,4 +14,8 @@ export class JwtService {
       subject: 'userToken',
     });
   }
+
+  verify(token: string): object | string {
+    return jwt.verify(token, this.options.privateKey);
+  }
 }

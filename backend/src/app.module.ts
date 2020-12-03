@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
@@ -10,6 +15,8 @@ import { User } from './users/entities/user.entity';
 import { Restaurant } from './retaurants/entities/restaurant.entity';
 import { RetaurantsModule } from './retaurants/retaurants.module';
 import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -35,18 +42,25 @@ import { JwtModule } from './jwt/jwt.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: true,
+      logging: false,
       entities: [User, Restaurant],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // or true
+      context: ({ req }) => ({ user: req.user }),
     }),
     JwtModule.forRoot({ privateKey: process.env.TOKEN_SECRET }),
     UsersModule,
-    CommonModule,
     RetaurantsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes({ path: '/graphql', method: RequestMethod.ALL });
+  }
+}

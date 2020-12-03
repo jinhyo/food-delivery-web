@@ -65,4 +65,8 @@ export class UsersService {
       return { ok: false, error };
     }
   }
+
+  async findUser(id: number): Promise<User> {
+    return this.userRepos.findOne({ id });
+  }
 }
