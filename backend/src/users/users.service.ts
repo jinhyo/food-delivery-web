@@ -10,12 +10,14 @@ import {
 import { LoginInputDTO, LoginOutputDTO } from './dto/login.dto';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepos: Repository<User>,
-    private readonly config: ConfigService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
   async createAccount({
     email,
@@ -55,9 +57,7 @@ export class UsersService {
       }
 
       // 토큰 생성
-      const token = jwt.sign({ id: user.id }, this.config.get('TOKEN_SECRET'), {
-        subject: 'userToken',
-      });
+      const token = this.jwtService.sign({ id: user.id });
 
       return { ok: true, token };
     } catch (error) {

@@ -41,10 +41,10 @@ import { JwtModule } from './jwt/jwt.module';
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // or true
     }),
+    JwtModule.forRoot({ privateKey: process.env.TOKEN_SECRET }),
     UsersModule,
     CommonModule,
     RetaurantsModule,
-    JwtModule,
   ],
   controllers: [],
   providers: [],
