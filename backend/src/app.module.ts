@@ -9,6 +9,7 @@ import * as Joi from 'joi';
 import { User } from './users/entities/user.entity';
 import { Restaurant } from './retaurants/entities/restaurant.entity';
 import { RetaurantsModule } from './retaurants/retaurants.module';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { RetaurantsModule } from './retaurants/retaurants.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        TOKEN_SECRET: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -42,6 +44,7 @@ import { RetaurantsModule } from './retaurants/retaurants.module';
     UsersModule,
     CommonModule,
     RetaurantsModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [],
