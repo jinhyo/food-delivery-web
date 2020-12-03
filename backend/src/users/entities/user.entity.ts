@@ -38,7 +38,7 @@ export class User extends CoreEntity {
   role: UserRole;
 
   @BeforeInsert() // userRepos.create() 단계에서 만들어지고난 다음에 userRepos.save()됨
-  async hashPassword(): Promise<void> {
+  async hashPassword() {
     try {
       this.password = await bcrypt.hash(this.password, 10);
     } catch (error) {

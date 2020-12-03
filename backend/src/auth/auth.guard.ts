@@ -9,6 +9,7 @@ export class AuthGuard implements CanActivate {
 
     if (!gqlContext.user) {
       return false;
+      // false일 경우 "Forbidden resource" 에러 발생
     }
     return true;
   }

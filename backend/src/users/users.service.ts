@@ -67,6 +67,12 @@ export class UsersService {
   }
 
   async findUser(id: number): Promise<User> {
-    return this.userRepos.findOne({ id });
+    try {
+      const user = await this.userRepos.findOne({ id });
+
+      return user;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

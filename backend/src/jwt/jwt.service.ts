@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from './jwt.constants';
 import { JwtModuleOptions } from './jwt.interfaces';
 import * as jwt from 'jsonwebtoken';
@@ -16,6 +16,12 @@ export class JwtService {
   }
 
   verify(token: string): object | string {
-    return jwt.verify(token, this.options.privateKey);
+    try {
+      const decodedObject = jwt.verify(token, this.options.privateKey);
+      return decodedObject;
+    } catch (error) {
+      console.error(error);
+      throw new ForbiddenException();
+    }
   }
 }
