@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
-import * as jwt from 'jsonwebtoken';
+import { Repository } from 'typeorm';
 
 import {
   CreateAccountInputDTO,
@@ -16,11 +15,9 @@ import {
   UpdateProfileOutputDTO,
 } from './dto/update-profile.dto';
 import { Verification } from './entities/verification.entity';
-import {
-  VerifyEmailInputDTO,
-  VerifyEmailOutputDTO,
-} from './dto/verify-email.dto';
+import { VerifyEmailOutputDTO } from './dto/verify-email.dto';
 import { UserProfileOutputDTO } from './dto/user-profile.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -28,9 +25,8 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepos: Repository<User>,
     @InjectRepository(Verification)
     private readonly verificationRepos: Repository<Verification>,
-
-    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly emailService: MailService,
   ) {}
   async createAccount({
     email,
@@ -49,9 +45,11 @@ export class UsersService {
         this.userRepos.create({ email, password, role }),
       );
 
-      await this.verificationRepos.save(
+      // 이메일 인증
+      const verification = await this.verificationRepos.save(
         this.verificationRepos.create({ user }),
       );
+      this.emailService.sendVerificationEmail(email, verification.code);
 
       return { ok: true };
     } catch (error) {
@@ -67,7 +65,6 @@ export class UsersService {
         { email },
         { select: ['id', 'password'] },
       );
-      console.log('user', user);
 
       if (!user) {
         return { ok: false, error: '해당 유저는 존재하지 않습니다.' };
@@ -112,7 +109,11 @@ export class UsersService {
       if (email) {
         user.email = email;
         user.verified = false;
-        await this.verificationRepos.save(this.verificationRepos.create(user));
+
+        const verification = await this.verificationRepos.save(
+          this.verificationRepos.create({ user }),
+        );
+        this.emailService.sendVerificationEmail(email, verification.code);
       }
       if (password) {
         user.password = password;
