@@ -15,11 +15,20 @@ import {
   UpdateProfileInputDTO,
   UpdateProfileOutputDTO,
 } from './dto/update-profile.dto';
+import { Verification } from './entities/verification.entity';
+import {
+  VerifyEmailInputDTO,
+  VerifyEmailOutputDTO,
+} from './dto/verify-email.dto';
+import { UserProfileOutputDTO } from './dto/user-profile.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepos: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verificationRepos: Repository<Verification>,
+
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
@@ -36,20 +45,30 @@ export class UsersService {
       }
 
       // 계정 생성 (hash는 entity에서)
-      await this.userRepos.save(
+      const user = await this.userRepos.save(
         this.userRepos.create({ email, password, role }),
       );
+
+      await this.verificationRepos.save(
+        this.verificationRepos.create({ user }),
+      );
+
       return { ok: true };
     } catch (error) {
       console.error(error);
-      return { ok: false, error: '계정을 만들지 못 했습니다.' };
+      return { ok: false, error: '계정을 만들지 못했습니다.' };
     }
   }
 
   async login({ email, password }: LoginInputDTO): Promise<LoginOutputDTO> {
     try {
       // 이메일 확인
-      const user = await this.userRepos.findOne({ email });
+      const user = await this.userRepos.findOne(
+        { email },
+        { select: ['id', 'password'] },
+      );
+      console.log('user', user);
+
       if (!user) {
         return { ok: false, error: '해당 유저는 존재하지 않습니다.' };
       }
@@ -62,6 +81,7 @@ export class UsersService {
 
       // 토큰 생성
       const token = this.jwtService.sign({ id: user.id });
+      console.log('token', token);
 
       return { ok: true, token };
     } catch (error) {
@@ -70,28 +90,61 @@ export class UsersService {
     }
   }
 
-  async findUser(id: number): Promise<User> {
+  async findUser(id: number): Promise<UserProfileOutputDTO> {
     try {
       const user = await this.userRepos.findOne({ id });
-      return user;
+      if (user) {
+        return { ok: true, user };
+      }
+      return { ok: false, error: '해당 유저가 없습니다.' };
     } catch (error) {
       console.error(error);
-      return null;
+      return { ok: false, error };
     }
   }
 
   async updateProfile(
     userID: number,
     { email, password }: UpdateProfileInputDTO,
-  ): Promise<User> {
-    const user = await this.userRepos.findOne(userID);
-    if (email) {
-      user.email = email;
-    }
-    if (password) {
-      user.password = password;
-    }
+  ): Promise<UpdateProfileOutputDTO> {
+    try {
+      const user = await this.userRepos.findOne(userID);
+      if (email) {
+        user.email = email;
+        user.verified = false;
+        await this.verificationRepos.save(this.verificationRepos.create(user));
+      }
+      if (password) {
+        user.password = password;
+      }
 
-    return this.userRepos.save(user);
+      await this.userRepos.save(user);
+
+      return { ok: true };
+    } catch (error) {
+      console.error(error);
+      return { ok: false, error };
+    }
+  }
+
+  async verifyEmail(code: string): Promise<VerifyEmailOutputDTO> {
+    try {
+      const verification = await this.verificationRepos.findOne(
+        { code },
+        { relations: ['user'] },
+      );
+
+      if (verification) {
+        verification.user.verified = true;
+        await this.userRepos.save(verification.user);
+        await this.verificationRepos.delete(verification.id);
+        return { ok: true };
+      }
+
+      return { ok: false, error: '이메일 체크 실패' };
+    } catch (error) {
+      console.error(error);
+      return { ok: false, error };
+    }
   }
 }

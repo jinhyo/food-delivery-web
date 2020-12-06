@@ -15,6 +15,10 @@ import {
   UserProfileInputDTO,
   UserProfileOutputDTO,
 } from './dto/user-profile.dto';
+import {
+  VerifyEmailInputDTO,
+  VerifyEmailOutputDTO,
+} from './dto/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -42,29 +46,25 @@ export class UsersResolver {
 
   @Query(() => UserProfileOutputDTO)
   @UseGuards(AuthGuard)
-  async userProfile(
+  userProfile(
     @Args() userInfo: UserProfileInputDTO,
   ): Promise<UserProfileOutputDTO> {
-    const user = await this.userService.findUser(userInfo.id);
-    if (!user) {
-      return { ok: false, error: '해당 유저가 없습니다.' };
-    }
-    return { ok: true, user };
+    return this.userService.findUser(userInfo.id);
   }
 
   @Mutation(() => UpdateProfileOutputDTO)
   @UseGuards(AuthGuard)
-  async updateProfile(
+  updateProfile(
     @AuthUser() loginUser: User,
     @Args('updateData') updateData: UpdateProfileInputDTO,
   ): Promise<UpdateProfileOutputDTO> {
-    try {
-      await this.userService.updateProfile(loginUser.id, updateData);
+    return this.userService.updateProfile(loginUser.id, updateData);
+  }
 
-      return { ok: true };
-    } catch (error) {
-      console.error(error);
-      return { ok: false, error };
-    }
+  @Mutation(() => VerifyEmailOutputDTO)
+  verifyEmail(
+    @Args('code') { code }: VerifyEmailInputDTO,
+  ): Promise<VerifyEmailOutputDTO> {
+    return this.userService.verifyEmail(code);
   }
 }

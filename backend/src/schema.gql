@@ -7,8 +7,9 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   email: String!
-  password: String!
+  password: String
   role: UserRole!
+  verified: Boolean!
 }
 
 """
@@ -44,6 +45,11 @@ type UserProfileOutputDTO {
   user: User
 }
 
+type VerifyEmailOutputDTO {
+  error: String
+  ok: Boolean!
+}
+
 type Restaurant {
   id: Float!
   name: String!
@@ -63,24 +69,29 @@ type Mutation {
   createAccount(userInfo: CreateAccountInputDTO!): CreateAccountOutputDTO!
   login(loginData: LoginInputDTO!): LoginOutputDTO!
   updateProfile(updateData: UpdateProfileInputDTO!): UpdateProfileOutputDTO!
+  verifyEmail(code: VerifyEmailInputDTO!): VerifyEmailOutputDTO!
   createRestaurant(input: CreateRestaurantDTO!): Boolean!
   updateRestaurant(id: Float!, data: UpdateRestaurantInputType!): Boolean!
 }
 
 input CreateAccountInputDTO {
   email: String!
-  password: String!
+  password: String
   role: UserRole!
 }
 
 input LoginInputDTO {
   email: String!
-  password: String!
+  password: String
 }
 
 input UpdateProfileInputDTO {
   email: String
   password: String
+}
+
+input VerifyEmailInputDTO {
+  code: String!
 }
 
 input CreateRestaurantDTO {
