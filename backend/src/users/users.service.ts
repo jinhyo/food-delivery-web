@@ -8,7 +8,6 @@ import {
 } from './dto/create-account.dto';
 import { LoginInputDTO, LoginOutputDTO } from './dto/login.dto';
 import { User } from './entities/user.entity';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from 'src/jwt/jwt.service';
 import {
   UpdateProfileInputDTO,
@@ -106,6 +105,7 @@ export class UsersService {
   ): Promise<UpdateProfileOutputDTO> {
     try {
       const user = await this.userRepos.findOne(userID);
+
       if (email) {
         user.email = email;
         user.verified = false;
