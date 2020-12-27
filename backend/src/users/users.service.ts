@@ -139,7 +139,7 @@ export class UsersService {
 
       return { ok: false, error: '이메일 체크 실패' };
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
       return { ok: false, error: error.message };
     }
   }

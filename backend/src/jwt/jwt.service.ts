@@ -17,12 +17,6 @@ export class JwtService {
   }
 
   verify(token: string): object | string {
-    try {
-      const decodedObject = jwt.verify(token, this.options.privateKey);
-      return decodedObject;
-    } catch (error) {
-      console.error(error);
-      throw new ForbiddenException();
-    }
+    return jwt.verify(token, this.options.privateKey);
   }
 }
