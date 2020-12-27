@@ -19,7 +19,7 @@ export class RestaurantService {
   createRestaurant(
     createRestaurantDTO: CreateRestaurantDTO,
   ): Promise<Restaurant> {
-    //   const newRestaurant = this.restaurantRepos.create({name : CreateRestaurantDTO.name ...})
+    // const newRestaurant = this.restaurantRepos.create({name : CreateRestaurantDTO.name ...})
     // DTO가 정의되어 있을 경우아래처럼 가능
     const newRestaurant = this.restaurantRepos.create(createRestaurantDTO);
 

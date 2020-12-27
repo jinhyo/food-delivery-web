@@ -45,14 +45,13 @@ export class UsersService {
       );
 
       // 이메일 인증
-      const verification = await this.verificationRepos.save(
-        this.verificationRepos.create({ user }),
-      );
+      const res = this.verificationRepos.create({ user });
+      const verification = await this.verificationRepos.save(res);
+
       this.emailService.sendVerificationEmail(email, verification.code);
 
       return { ok: true };
     } catch (error) {
-      console.error(error);
       return { ok: false, error: '계정을 만들지 못했습니다.' };
     }
   }
@@ -77,25 +76,21 @@ export class UsersService {
 
       // 토큰 생성
       const token = this.jwtService.sign({ id: user.id });
-      console.log('token', token);
 
       return { ok: true, token };
     } catch (error) {
-      console.error(error);
-      return { ok: false, error };
+      return { ok: false, error: '로그인에 실패했습니다.' };
     }
   }
 
   async findUser(id: number): Promise<UserProfileOutputDTO> {
     try {
-      const user = await this.userRepos.findOne({ id });
+      const user = await this.userRepos.findOneOrFail({ id });
       if (user) {
         return { ok: true, user };
       }
-      return { ok: false, error: '해당 유저가 없습니다.' };
     } catch (error) {
-      console.error(error);
-      return { ok: false, error };
+      return { ok: false, error: '해당 유저가 없습니다.' };
     }
   }
 
@@ -115,6 +110,7 @@ export class UsersService {
         );
         this.emailService.sendVerificationEmail(email, verification.code);
       }
+
       if (password) {
         user.password = password;
       }
@@ -123,8 +119,7 @@ export class UsersService {
 
       return { ok: true };
     } catch (error) {
-      console.error(error);
-      return { ok: false, error };
+      return { ok: false, error: '프로필 업데이트에 실패했습니다.' };
     }
   }
 
@@ -144,8 +139,8 @@ export class UsersService {
 
       return { ok: false, error: '이메일 체크 실패' };
     } catch (error) {
-      console.error(error);
-      return { ok: false, error };
+      console.error(error.message);
+      return { ok: false, error: error.message };
     }
   }
 }

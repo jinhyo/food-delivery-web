@@ -29,7 +29,7 @@ import { Restaurant } from '../entities/restaurant.entity';
 
 // 위에 대신 @Entity와 연동 되도록 해서 @Entity를 사용해
 // DTO와 graphQl 둘을 자동으로 정의한다.
-// ObitType은 @InputType에서만 작동하므로 3번째 인자에서 @InputType으로 변경해줘야 한다.
+// OmitType은 @InputType에서만 작동하므로 3번째 인자에서 @InputType으로 변경해줘야 한다.
 // 또는 @Entity에 @InputType({isAbstract: true})를 해줘야 한다.
 @InputType()
 export class CreateRestaurantDTO extends OmitType(

@@ -27,7 +27,7 @@ export class RestaurantResolver {
   @Mutation(() => Boolean)
   async createRestaurant(
     // @Args() restaurantInfo: CreateRestaurantDTO, =  DTO를 @ArgsType으로 작성했을 경우
-    @Args('input') createRestaurantDTO: CreateRestaurantDTO, // DTO를 @ArgsType 으로 작성했을 경우
+    @Args('input') createRestaurantDTO: CreateRestaurantDTO, // DTO를 @InputType 으로 작성했을 경우
   ): Promise<boolean> {
     try {
       await this.restaurantService.createRestaurant(createRestaurantDTO);
