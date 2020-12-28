@@ -23,12 +23,12 @@ registerEnumType(UserRole, { name: 'UserRole' });
 @Entity()
 export class User extends CoreEntity {
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   @IsEmail()
   email: string;
 
   @Field(() => String, { nullable: true })
-  @Column({ select: false })
+  @Column({ select: false }) // { select: false } 로 인해 기본적으로 null을 보냄
   @IsString()
   password: string;
 

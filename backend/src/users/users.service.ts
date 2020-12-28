@@ -100,10 +100,14 @@ export class UsersService {
   ): Promise<UpdateProfileOutputDTO> {
     try {
       const user = await this.userRepos.findOne(userID);
-
       if (email) {
+        const existingEmail = await this.userRepos.findOne({ email });
+        if (existingEmail) {
+          return { ok: false, error: '해당 이메일이 존재합니다.' };
+        }
         user.email = email;
         user.verified = false;
+        // await this.verificationRepos.delete({ user: { id: userID } });
 
         const verification = await this.verificationRepos.save(
           this.verificationRepos.create({ user }),
@@ -119,6 +123,7 @@ export class UsersService {
 
       return { ok: true };
     } catch (error) {
+      console.error(error);
       return { ok: false, error: '프로필 업데이트에 실패했습니다.' };
     }
   }
@@ -134,12 +139,13 @@ export class UsersService {
         verification.user.verified = true;
         await this.userRepos.save(verification.user);
         await this.verificationRepos.delete(verification.id);
+
         return { ok: true };
       }
 
-      return { ok: false, error: '이메일 체크 실패' };
+      return { ok: false, error: '이메일 인증 실패' };
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       return { ok: false, error: error.message };
     }
   }

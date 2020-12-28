@@ -301,7 +301,7 @@ describe('User Service Test', () => {
       verificationRepos.findOne.mockResolvedValue(undefined);
 
       const result = await userService.verifyEmail(CODE);
-      expect(result).toEqual({ ok: false, error: '이메일 체크 실패' });
+      expect(result).toEqual({ ok: false, error: '이메일 인증 실패' });
     });
 
     it('예외상황 발생시 실패', async () => {
