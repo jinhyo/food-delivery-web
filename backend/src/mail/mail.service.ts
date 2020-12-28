@@ -10,7 +10,7 @@ export class MailService {
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {}
 
-  private async sendEmail(
+  async sendEmail(
     subject: string,
     template: string,
     emailVariables: EmailVariables[],
@@ -43,8 +43,8 @@ export class MailService {
 
   sendVerificationEmail(email: string, code: string) {
     this.sendEmail('이메일 인증', 'email-verification', [
-      { key: 'code', value: code },
       { key: 'userName', value: email },
+      { key: 'code', value: code },
     ]);
   }
 }

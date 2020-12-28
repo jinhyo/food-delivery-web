@@ -5,6 +5,7 @@ import * as jwt from 'jsonwebtoken';
 
 const TOKEN = 'TOKEN';
 const DECODED_OBJECT = { id: 1 };
+const TOKEN_SECRET = 'test';
 
 jest.mock('jsonwebtoken', () => {
   return {
@@ -14,8 +15,6 @@ jest.mock('jsonwebtoken', () => {
 });
 
 describe('JwtService', () => {
-  const TOKEN_SECRET = 'test';
-
   let jwtService: JwtService;
   beforeEach(async () => {
     const module = await Test.createTestingModule({
