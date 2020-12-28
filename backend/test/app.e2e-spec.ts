@@ -13,6 +13,10 @@ jest.mock('got', () => {
 const GRAPHQL_ENDPOINT = '/graphql';
 
 describe('AppController (e2e)', () => {
+  const EMAIL: string = 'test@naver.com';
+  const PWD = '12345';
+  let jwtToken: string;
+
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -37,7 +41,7 @@ describe('AppController (e2e)', () => {
           query: `
           mutation {
           createAccount(
-            userInfo: { role: Owner, email: "test@naver.com", password: "12345" }
+            userInfo: { role: Owner, email: "${EMAIL}", password: "${PWD}" }
           ) {
             ok
             error
@@ -59,7 +63,7 @@ describe('AppController (e2e)', () => {
           query: `
           mutation {
           createAccount(
-            userInfo: { role: Owner, email: "test@naver.com", password: "12345" }
+            userInfo: { role: Owner, email: "${EMAIL}", password: "${PWD}" }
           ) {
             ok
             error
@@ -74,6 +78,87 @@ describe('AppController (e2e)', () => {
         });
     });
   });
+
+  describe('login mutation', () => {
+    it('계정 일치 시 로그인 성공', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation {
+          login(loginData: { email:"${EMAIL}", password: "${PWD}" }) {
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+
+          expect(login.ok).toBe(true);
+          expect(login.error).toBe(null);
+          expect(login.token).toEqual(expect.any(String));
+          jwtToken = login.token;
+        });
+    });
+
+    it('이메일 불일치 시 로그인 실패', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation {
+          login(loginData: { email: "wrong@naver.com", password: "${PWD}" }) {
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(false);
+          expect(login.error).toBe('해당 유저는 존재하지 않습니다.');
+        });
+    });
+
+    it('패스워드 불일치 시 로그인 실패', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation {
+          login(loginData: { email: "${EMAIL}", password: "wrong" }) {
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          expect(login.ok).toBe(false);
+          expect(login.error).toBe('잘못된 패스워드 입니다.');
+        });
+    });
+  });
+
   describe('userProfile query', () => {});
   describe('login mutation', () => {});
   describe('me query', () => {});
