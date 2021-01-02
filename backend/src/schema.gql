@@ -22,7 +22,7 @@ type Restaurant {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  coverImg: String
+  coverImg: String!
   address: String!
   category: Category
   owner: User!
@@ -113,7 +113,7 @@ input VerifyEmailInputDTO {
 
 input CreateRestaurantInputDTO {
   name: String!
-  coverImg: String
+  coverImg: String!
   address: String!
   categoryName: String!
 }
