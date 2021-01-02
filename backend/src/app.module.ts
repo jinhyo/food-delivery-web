@@ -18,6 +18,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Category } from './retaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -38,7 +39,6 @@ import { MailModule } from './mail/mail.module';
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
       }),
     }),
-
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -48,7 +48,7 @@ import { MailModule } from './mail/mail.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: false,
-      entities: [User, Verification, Restaurant],
+      entities: [User, Verification, Restaurant, Category],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // or true
