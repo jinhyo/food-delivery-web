@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
-import { CreateRestaurantDTO } from './dto/create-restaurant.dto';
-import { UpdateRestaurantDTO } from './dto/update-restaurant.dto';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
+import {
+  CreateRestaurantInputDTO,
+  CreateRestaurantOutputDTO,
+} from './dto/create-restaurant.dto';
+import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
 
 @Injectable()
@@ -10,23 +14,38 @@ export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private readonly restaurantRepos: Repository<Restaurant>,
+    @InjectRepository(Category)
+    private readonly categoryRepos: Repository<Category>,
   ) {}
 
-  getAll(): Promise<Restaurant[]> {
-    return this.restaurantRepos.find();
-  }
+  async createRestaurant(
+    restaurantInfos: CreateRestaurantInputDTO,
+    loginUser: User,
+  ): Promise<CreateRestaurantOutputDTO> {
+    try {
+      const categoryName = restaurantInfos.categoryName
+        .trim()
+        .toLowerCase()
+        .replace(/ +/g, ' ');
+      const categorySlug = categoryName.replace(/ /g, '-');
 
-  createRestaurant(
-    createRestaurantDTO: CreateRestaurantDTO,
-  ): Promise<Restaurant> {
-    // const newRestaurant = this.restaurantRepos.create({name : CreateRestaurantDTO.name ...})
-    // DTO가 정의되어 있을 경우아래처럼 가능
-    const newRestaurant = this.restaurantRepos.create(createRestaurantDTO);
+      let category = await this.categoryRepos.findOne({ slug: categorySlug });
+      if (!category) {
+        category = await this.categoryRepos.save(
+          this.categoryRepos.create({ name: categoryName, slug: categorySlug }),
+        );
+      }
 
-    return this.restaurantRepos.save(newRestaurant);
-  }
+      const restaurant = await this.restaurantRepos.save({
+        ...restaurantInfos,
+        owner: loginUser,
+        category,
+      });
 
-  updaterestaurant({ id, data }: UpdateRestaurantDTO): Promise<UpdateResult> {
-    return this.restaurantRepos.update(id, { ...data });
+      return { ok: true, restaurant };
+    } catch (error) {
+      console.error(error);
+      return { ok: false, error: error.message };
+    }
   }
 }

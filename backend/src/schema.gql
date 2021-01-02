@@ -7,7 +7,8 @@ type Category {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  coverImg: String!
+  coverImg: String
+  slug: String!
   restaurants: [Restaurant!]!
 }
 
@@ -21,7 +22,7 @@ type Restaurant {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String!
-  coverImg: String!
+  coverImg: String
   address: String!
   category: Category
   owner: User!
@@ -71,11 +72,15 @@ type VerifyEmailOutputDTO {
   ok: Boolean!
 }
 
+type CreateRestaurantOutputDTO {
+  error: String
+  ok: Boolean!
+  restaurant: Restaurant
+}
+
 type Query {
   me: User!
   userProfile(id: Float!): UserProfileOutputDTO!
-  restaurants(veganOnly: Boolean!): Boolean!
-  restaurants2: [Restaurant!]!
 }
 
 type Mutation {
@@ -83,8 +88,7 @@ type Mutation {
   login(loginData: LoginInputDTO!): LoginOutputDTO!
   updateProfile(updateData: UpdateProfileInputDTO!): UpdateProfileOutputDTO!
   verifyEmail(code: VerifyEmailInputDTO!): VerifyEmailOutputDTO!
-  createRestaurant(input: CreateRestaurantDTO!): Boolean!
-  updateRestaurant(id: Float!, data: UpdateRestaurantInputType!): Boolean!
+  createRestaurant(input: CreateRestaurantInputDTO!): CreateRestaurantOutputDTO!
 }
 
 input CreateAccountInputDTO {
@@ -107,44 +111,9 @@ input VerifyEmailInputDTO {
   code: String!
 }
 
-input CreateRestaurantDTO {
-  createdAt: DateTime!
-  updatedAt: DateTime!
+input CreateRestaurantInputDTO {
   name: String!
-  coverImg: String!
-  address: String!
-  category: CategoryInputType
-  owner: UserInputType!
-}
-
-input CategoryInputType {
-  name: String!
-  coverImg: String!
-  restaurants: [RestaurantInputType!]!
-}
-
-input RestaurantInputType {
-  name: String!
-  coverImg: String!
-  address: String!
-  category: CategoryInputType
-  owner: UserInputType!
-}
-
-input UserInputType {
-  email: String!
-  password: String
-  role: UserRole!
-  verified: Boolean!
-  restaurants: [RestaurantInputType!]!
-}
-
-input UpdateRestaurantInputType {
-  createdAt: DateTime
-  updatedAt: DateTime
-  name: String
   coverImg: String
-  address: String
-  category: CategoryInputType
-  owner: UserInputType
+  address: String!
+  categoryName: String!
 }
