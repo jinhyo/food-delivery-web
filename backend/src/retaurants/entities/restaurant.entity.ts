@@ -11,7 +11,7 @@ import { Category } from './category.entity';
 @Entity() // typeorm db model 용
 export class Restaurant extends CoreEntity {
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   @IsString()
   name: string;
 
@@ -21,7 +21,7 @@ export class Restaurant extends CoreEntity {
   coverImg: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   @IsString()
   address: string;
 

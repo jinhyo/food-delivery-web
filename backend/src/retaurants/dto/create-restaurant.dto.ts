@@ -1,4 +1,12 @@
-import { InputType, OmitType } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  OmitType,
+  PickType,
+} from '@nestjs/graphql';
+import { IsOptional, IsString } from 'class-validator';
+import { OutputDTO } from 'src/common/dtos/output.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 
 // @InputType()을 사용하면 graphQl에서 인자를 적을 때
@@ -32,8 +40,18 @@ import { Restaurant } from '../entities/restaurant.entity';
 // OmitType은 @InputType에서만 작동하므로 3번째 인자에서 @InputType으로 변경해줘야 한다.
 // 또는 @Entity에 @InputType({isAbstract: true})를 해줘야 한다.
 @InputType()
-export class CreateRestaurantDTO extends OmitType(
-  Restaurant,
-  ['id'],
-  InputType,
-) {}
+export class CreateRestaurantInputDTO extends PickType(Restaurant, [
+  'name',
+  'coverImg',
+  'address',
+]) {
+  @Field(() => String)
+  @IsString()
+  categoryName: string;
+}
+
+@ObjectType()
+export class CreateRestaurantOutputDTO extends OutputDTO {
+  @Field(() => Restaurant, { nullable: true })
+  restaurant?: Restaurant;
+}
