@@ -60,6 +60,7 @@ import { Category } from './retaurants/entities/category.entity';
       fromEmail: process.env.FROM_EMAIL,
       domain: process.env.MAILGUN_DOMAIN_NAME,
     }),
+    AuthModule,
     UsersModule,
     RetaurantsModule,
     AuthModule,
