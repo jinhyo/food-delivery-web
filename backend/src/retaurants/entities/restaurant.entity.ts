@@ -15,8 +15,8 @@ export class Restaurant extends CoreEntity {
   @IsString()
   name: string;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true })
+  @Field(() => String)
+  @Column()
   @IsString()
   coverImg: string;
 
